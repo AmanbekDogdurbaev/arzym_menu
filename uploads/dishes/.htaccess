@@ -1,0 +1,7 @@
+# Запрещаем выполнение скриптов в папке загрузок — только отдача файлов как есть
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<FilesMatch "\.(php|php\d|phtml|pl|py|cgi|asp|sh)$">
+    Require all denied
+</FilesMatch>

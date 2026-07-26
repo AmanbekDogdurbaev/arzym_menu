@@ -1,0 +1,404 @@
+:root {
+  /* Базовые значения темы — переопределяются inline-стилем из настроек админки */
+  --bg: #faf3e9;
+  --dark: #3b2417;
+  --accent: #c8932a;
+  --text: #2c1e14;
+
+  /* Производные — подстраиваются автоматически под выбранные цвета */
+  --card-bg: color-mix(in srgb, var(--bg) 82%, white 18%);
+  --text-light: color-mix(in srgb, var(--text) 55%, white 45%);
+  --border: color-mix(in srgb, var(--text) 14%, transparent);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Шрифты темы */
+body.theme-font-classic { font-family: Georgia, 'Times New Roman', Times, serif; }
+body.theme-font-decorative { font-family: 'Playfair Display', Georgia, serif; }
+
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* Header */
+.site-header {
+  background: var(--dark);
+  color: #fff;
+  padding: 14px 16px;
+  position: relative;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.footer-inner { flex-direction: column; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.brand img { height: 40px; width: 40px; border-radius: 8px; object-fit: cover; }
+
+.lang-switch { display: flex; gap: 6px; }
+.lang-switch a {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.35);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.lang-switch a.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Шапка-баннер (hero) */
+body.header-hero .site-header {
+  background-size: cover;
+  background-position: center;
+  min-height: 260px;
+  display: flex;
+  align-items: flex-end;
+}
+body.header-hero .site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
+}
+body.header-hero .header-inner { position: relative; z-index: 1; }
+body.header-hero .brand { font-size: 1.6rem; }
+
+/* Единый липкий блок: поиск + категории. Прячется при скролле вниз, появляется при скролле вверх */
+.sticky-tools {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  transition: transform 0.25s ease;
+  will-change: transform;
+}
+.sticky-tools.tools-hidden { transform: translateY(-100%); }
+
+/* Search */
+.search-bar {
+  padding: 12px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.search-bar input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  background: var(--card-bg);
+  color: var(--text);
+}
+.search-bar input:focus { outline: 2px solid var(--accent); }
+
+/* Category nav — на мобильном сворачивается в выпадающий список под кнопкой ☰ */
+.cat-nav-wrap { position: relative; border-bottom: 1px solid var(--border); }
+
+.cat-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--bg);
+  border: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--dark);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.cat-toggle-icon { font-size: 1.05rem; line-height: 1; }
+.cat-toggle-caret { margin-left: auto; transition: transform 0.2s ease; }
+.cat-toggle[aria-expanded="true"] .cat-toggle-caret { transform: rotate(180deg); }
+
+.cat-nav {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: var(--card-bg);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 60vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 14px 14px;
+}
+.cat-nav.open { display: flex; }
+.cat-nav a {
+  white-space: normal;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--dark);
+}
+.cat-nav a.active { background: var(--accent); color: #fff; }
+
+@media (min-width: 700px) {
+  .cat-nav-wrap { border-bottom: none; }
+  .cat-toggle { display: none; }
+  .cat-nav, .cat-nav.open {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 16px;
+    background: var(--bg);
+    position: static;
+    max-height: none;
+    box-shadow: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cat-nav a {
+    white-space: nowrap;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+  }
+  .cat-nav a.active { border-color: var(--accent); }
+}
+
+/* Sections */
+.menu-section {
+  padding: 24px 16px 4px;
+  scroll-margin-top: calc(var(--tools-h, 0px) + 8px);
+}
+.menu-section h2 {
+  font-size: 1.4rem;
+  color: var(--dark);
+  border-left: 4px solid var(--accent);
+  padding-left: 10px;
+  margin: 0 0 16px;
+}
+
+/* Мобильный вид — компактный список (маленькое фото слева) */
+.dishes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dish-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: none;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
+  padding: 8px;
+  position: relative;
+}
+/* Стили карточек блюд */
+body.card-square .dish-card { border-radius: 0; box-shadow: none; border: 1px solid var(--border); }
+body.card-outline .dish-card { border-radius: 10px; box-shadow: none; border: 2px solid var(--border); }
+
+.dish-card .dish-img {
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  align-self: center;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--border);
+}
+.dish-card .dish-img.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+  color: var(--text-light);
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+.dish-body { padding: 4px 6px 4px 0; display: flex; flex-direction: column; justify-content: center; gap: 4px; flex: 1; min-width: 0; }
+.dish-body h3 { margin: 0; font-size: 1.02rem; color: var(--text); }
+.dish-body p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dish-price { font-weight: 700; color: var(--accent); font-size: 1rem; margin-top: 2px; }
+.badge-hit {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+/* Десктоп / широкий экран — сетка карточек с крупным фото сверху */
+@media (min-width: 700px) {
+  .dishes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .dish-card { flex-direction: column; padding: 0; gap: 0; }
+  .dish-card .dish-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+    align-self: auto;
+    border-radius: 0;
+  }
+  .dish-card .dish-img.placeholder { font-size: 0.85rem; padding: 0; }
+  .dish-body { padding: 12px 14px 14px; gap: 6px; }
+  .dish-body h3 { font-size: 1.05rem; }
+  .dish-body p { font-size: 0.88rem; -webkit-line-clamp: initial; overflow: visible; }
+  .dish-price { font-size: 1.05rem; margin-top: 4px; }
+  .badge-hit { top: 10px; left: 10px; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; }
+}
+
+.no-results { text-align: center; color: var(--text-light); padding: 40px 16px; display: none; }
+
+/* Footer */
+.site-footer {
+  margin-top: 40px;
+  background: var(--dark);
+  color: #f1e9dd;
+  padding: 28px 16px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+.site-footer .contacts { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin-bottom: 10px; }
+.site-footer a.social { color: var(--accent); font-weight: 600; }
+
+@media (min-width: 700px) {
+  .menu-section { padding: 32px 32px 4px; }
+  .search-bar, .cat-nav { padding-left: 32px; padding-right: 32px; }
+}
+
+/* Крупные экраны: не растягивать контент во всю ширину */
+@media (min-width: 1100px) {
+  .search-bar input, .cat-nav, .menu-section {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .header-inner, .footer-inner { max-width: 1100px; margin-left: auto; margin-right: auto; }
+}
+
+@media (max-width: 380px) {
+  .brand { font-size: 1.05rem; }
+  .lang-switch a { padding: 5px 9px; font-size: 0.78rem; }
+}
+
+/* Клик по карточке блюда — курсор-подсказка */
+.dish-card { cursor: pointer; }
+.dish-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Модальное окно блюда */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+.modal-box {
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.2s ease;
+}
+.modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.modal-img-wrap { position: relative; }
+.modal-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--border); }
+.modal-img[src=""], .modal-img:not([src]) { display: none; }
+.modal-badge { top: 12px; left: 12px; }
+
+.modal-content { padding: 18px 20px 22px; }
+.modal-content h2 { margin: 0 0 8px; font-size: 1.3rem; color: var(--dark); }
+.modal-meta { margin-bottom: 8px; }
+.modal-cook-time {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+.modal-content p { margin: 0 0 14px; color: var(--text-light); line-height: 1.5; white-space: pre-line; }
+.modal-price { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+
+body.modal-open { overflow: hidden; }
