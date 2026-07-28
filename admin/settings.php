@@ -57,13 +57,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!empty($settings['hero_image'])) delete_dish_image($settings['hero_image']);
                 $settings['hero_image'] = $newHero;
             }
+
+            $newBg = upload_dish_image('bg_image');
+            if ($newBg) {
+                if (!empty($settings['bg_image'])) delete_dish_image($settings['bg_image']);
+                $settings['bg_image'] = $newBg;
+            }
+            if (!empty($_POST['remove_bg_image']) && !$newBg) {
+                delete_dish_image($settings['bg_image']);
+                $settings['bg_image'] = null;
+            }
+
             $stmt = $pdo->prepare(
                 'UPDATE settings SET theme_bg=?, theme_dark=?, theme_accent=?, theme_text=?,
-                 theme_font=?, theme_card_style=?, theme_header_style=?, hero_image=? WHERE id=1'
+                 theme_font=?, theme_card_style=?, theme_header_style=?, hero_image=?, bg_image=? WHERE id=1'
             );
             $stmt->execute([
                 $settings['theme_bg'], $settings['theme_dark'], $settings['theme_accent'], $settings['theme_text'],
-                $settings['theme_font'], $settings['theme_card_style'], $settings['theme_header_style'], $settings['hero_image'],
+                $settings['theme_font'], $settings['theme_card_style'], $settings['theme_header_style'],
+                $settings['hero_image'], $settings['bg_image'],
             ]);
             $flash = 'Тема оформления сохранена';
         } catch (Exception $e) {
@@ -182,6 +194,15 @@ require __DIR__ . '/partials/header.php';
           <label>Фото для шапки-баннера (если выбран вид «с фото-баннером»)</label>
           <input type="file" name="hero_image" id="th_hero_file" accept="image/*" capture="environment">
         </div>
+        <div class="field full">
+          <label>Фоновое изображение всей страницы меню (необязательно)</label>
+          <?php if (!empty($settings['bg_image'])): ?>
+            <img class="thumb-preview" src="../uploads/dishes/<?= e($settings['bg_image']) ?>">
+            <label style="font-weight:400;"><input type="checkbox" name="remove_bg_image" value="1"> Убрать фоновое изображение</label>
+          <?php endif; ?>
+          <input type="file" name="bg_image" id="th_bg_file" accept="image/*" capture="environment">
+          <small style="color:#6b5c4f;">Фото будет растянуто на весь фон меню с лёгким затемнением в цвет фона — для читаемости текста поверх.</small>
+        </div>
       </div>
 
       <div class="form-actions"><button class="btn btn-primary" type="submit">Сохранить тему</button></div>
@@ -245,6 +266,7 @@ require __DIR__ . '/partials/header.php';
   var cardSel = document.getElementById('th_card');
   var headerSel = document.getElementById('th_header');
   var heroFile = document.getElementById('th_hero_file');
+  var bgFile = document.getElementById('th_bg_file');
 
   var root = document.getElementById('tp-root');
   var header = document.getElementById('tp-header');
@@ -324,6 +346,18 @@ require __DIR__ . '/partials/header.php';
         header.style.backgroundImage = 'url(' + URL.createObjectURL(file) + ')';
         header.style.backgroundSize = 'cover';
         header.style.backgroundPosition = 'center';
+      }
+    });
+  }
+
+  if (bgFile) {
+    bgFile.addEventListener('change', function () {
+      var file = bgFile.files[0];
+      if (file) {
+        root.style.backgroundImage = 'url(' + URL.createObjectURL(file) + ')';
+        root.style.backgroundSize = 'cover';
+        root.style.backgroundPosition = 'center';
+        body.style.background = 'color-mix(in srgb, ' + bg.value + ' 82%, transparent)';
       }
     });
   }

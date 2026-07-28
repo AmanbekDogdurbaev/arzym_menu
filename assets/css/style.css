@@ -21,6 +21,26 @@ body {
   color: var(--text);
 }
 
+/* Фоновое изображение всей страницы — с тонировкой в цвет фона для читаемости текста */
+body.has-bg-image {
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: var(--bg);
+  background-blend-mode: normal;
+  position: relative;
+}
+body.has-bg-image::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  z-index: 0;
+  pointer-events: none;
+}
+body.has-bg-image > * { position: relative; z-index: 1; }
+
 /* Шрифты темы */
 body.theme-font-classic { font-family: Georgia, 'Times New Roman', Times, serif; }
 body.theme-font-decorative { font-family: 'Playfair Display', Georgia, serif; }

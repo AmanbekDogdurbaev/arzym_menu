@@ -69,7 +69,8 @@ CREATE TABLE `settings` (
   `theme_font` VARCHAR(20) DEFAULT 'modern',
   `theme_card_style` VARCHAR(20) DEFAULT 'rounded',
   `theme_header_style` VARCHAR(20) DEFAULT 'compact',
-  `hero_image` VARCHAR(255) DEFAULT NULL
+  `hero_image` VARCHAR(255) DEFAULT NULL,
+  `bg_image` VARCHAR(255) DEFAULT NULL
 ) ENGINE=InnoDB;
 
 INSERT INTO `settings` (`id`, `site_name`, `currency`) VALUES (1, 'Arzym', 'сом');

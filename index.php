@@ -23,6 +23,9 @@ if ($themeCardStyle !== 'rounded') {
 if ($themeHeaderStyle === 'hero') {
     $bodyClasses[] = 'header-hero';
 }
+if (!empty($settings['bg_image'])) {
+    $bodyClasses[] = 'has-bg-image';
+}
 
 $categories = $pdo->query("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order, id")->fetchAll();
 
@@ -57,7 +60,7 @@ $currency = e($settings['currency'] ?? 'сом');
 }
 </style>
 </head>
-<body class="<?= e(implode(' ', $bodyClasses)) ?>">
+<body class="<?= e(implode(' ', $bodyClasses)) ?>"<?php if (!empty($settings['bg_image'])): ?> style="background-image: url('uploads/dishes/<?= e($settings['bg_image']) ?>')"<?php endif; ?>>
 
 <header class="site-header"<?php if ($themeHeaderStyle === 'hero' && !empty($settings['hero_image'])): ?> style="background-image: url('uploads/dishes/<?= e($settings['hero_image']) ?>')"<?php endif; ?>>
   <div class="header-inner">
