@@ -107,9 +107,19 @@ function upload_dish_image($inputName) {
         'image/jpeg' => 'jpg',
         'image/png' => 'png',
         'image/webp' => 'webp',
+        'image/gif' => 'gif',
+        'image/bmp' => 'bmp',
+        'image/x-ms-bmp' => 'bmp',
     ];
     if (!isset($allowed[$mime])) {
-        throw new Exception('Разрешены только изображения JPG, PNG или WEBP');
+        if (in_array($mime, ['image/heic', 'image/heif'], true)) {
+            throw new Exception(
+                'Формат HEIC/HEIF (фото iPhone) браузеры не показывают напрямую. ' .
+                'В настройках телефона включите "Наиболее совместимые" для камеры, либо ' .
+                'при выборе фото из галереи используйте опцию "Сохранить как JPEG", и загрузите снова.'
+            );
+        }
+        throw new Exception('Разрешены только изображения: JPG, PNG, WEBP, GIF, BMP');
     }
 
     if (!is_dir(UPLOAD_DIR)) {
