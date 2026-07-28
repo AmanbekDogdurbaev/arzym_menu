@@ -149,7 +149,7 @@ require __DIR__ . '/partials/header.php';
       <small style="color:#6b5c4f;">На телефоне откроется выбор: снять фото камерой или выбрать из галереи</small>
     </div>
 
-    <div class="form-grid">
+    <div class="form-grid checkbox-grid">
       <div class="field"><label><input type="checkbox" name="is_active" <?= $dish['is_active'] ? 'checked' : '' ?>> Активно (показывать в меню)</label></div>
       <div class="field"><label><input type="checkbox" name="is_featured" <?= $dish['is_featured'] ? 'checked' : '' ?>> ⭐ Хит / рекомендуем</label></div>
       <div class="field"><label><input type="checkbox" name="is_spicy" <?= $dish['is_spicy'] ? 'checked' : '' ?>> 🌶 Острое</label></div>

@@ -64,6 +64,8 @@ table.data-table img.thumb { width: 48px; height: 48px; object-fit: cover; borde
 
 /* Forms */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid.checkbox-grid { grid-template-columns: repeat(3, 1fr); }
+.form-grid.checkbox-grid .field { align-items: center; text-align: center; }
 .form-grid .full { grid-column: 1 / -1; }
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
 .field label { font-size: 0.85rem; font-weight: 600; color: #6b5c4f; }
@@ -136,7 +138,7 @@ table.data-table img.thumb { width: 48px; height: 48px; object-fit: cover; borde
     overflow-y: auto;
   }
   .admin-sidebar nav.open { display: flex; }
-  .form-grid { grid-template-columns: 1fr; }
+  .form-grid, .form-grid.checkbox-grid { grid-template-columns: 1fr; }
   .admin-topbar { padding: 14px 16px; flex-wrap: wrap; gap: 6px; }
   .admin-topbar h1 { font-size: 1.1rem; }
   .admin-content { padding: 16px; }

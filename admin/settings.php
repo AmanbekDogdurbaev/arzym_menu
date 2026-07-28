@@ -248,18 +248,6 @@ require __DIR__ . '/partials/header.php';
   </form>
 </div>
 
-<div class="panel">
-  <h3 style="margin-top:0;">Автоперевод</h3>
-  <p>Текущий провайдер: <strong><?= e(AI_PROVIDER) ?></strong>.</p>
-  <?php if (AI_PROVIDER === 'google_free'): ?>
-    <p>Используется бесплатный перевод (без ключа и без оплаты). Это неофициальный публичный сервис — в редких
-    случаях перевод может быть неточным или временно недоступным. Всегда проверяйте и при необходимости
-    поправьте текст на kg/en вручную перед сохранением.</p>
-  <?php endif; ?>
-  <p>Провайдер и ключи API меняются в файле <code>config/config.php</code> (константа <code>AI_PROVIDER</code>:
-  <code>google_free</code> / <code>anthropic</code> / <code>openai</code>), редактировать через админку не нужно —
-  это делается один раз при настройке сервера.</p>
-</div>
 
 <script>
 (function () {
