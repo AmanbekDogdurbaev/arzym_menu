@@ -5,7 +5,8 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : (isset($_POST['id']) ? (int)$_POST
 $dish = [
     'category_id' => '', 'name_ru' => '', 'name_kg' => '', 'name_en' => '',
     'description_ru' => '', 'description_kg' => '', 'description_en' => '',
-    'price' => '', 'cook_time_minutes' => '', 'image' => null, 'is_active' => 1, 'is_featured' => 0, 'sort_order' => 0,
+    'price' => '', 'cook_time_minutes' => '', 'image' => null, 'is_active' => 1, 'is_featured' => 0,
+    'is_spicy' => 0, 'is_vegan' => 0, 'is_new' => 0, 'is_promo' => 0, 'sort_order' => 0,
 ];
 $error = '';
 
@@ -31,6 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dish['cook_time_minutes'] = trim($_POST['cook_time_minutes'] ?? '') === '' ? null : (int)$_POST['cook_time_minutes'];
     $dish['is_active'] = isset($_POST['is_active']) ? 1 : 0;
     $dish['is_featured'] = isset($_POST['is_featured']) ? 1 : 0;
+    $dish['is_spicy'] = isset($_POST['is_spicy']) ? 1 : 0;
+    $dish['is_vegan'] = isset($_POST['is_vegan']) ? 1 : 0;
+    $dish['is_new'] = isset($_POST['is_new']) ? 1 : 0;
+    $dish['is_promo'] = isset($_POST['is_promo']) ? 1 : 0;
     $dish['sort_order'] = (int)($_POST['sort_order'] ?? 0);
 
     if ($dish['name_ru'] === '') {
@@ -53,23 +58,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare(
                     'UPDATE dishes SET category_id=?, name_ru=?, name_kg=?, name_en=?,
                      description_ru=?, description_kg=?, description_en=?, price=?, cook_time_minutes=?, image=?,
-                     is_active=?, is_featured=?, sort_order=? WHERE id=?'
+                     is_active=?, is_featured=?, is_spicy=?, is_vegan=?, is_new=?, is_promo=?, sort_order=? WHERE id=?'
                 );
                 $stmt->execute([
                     $dish['category_id'], $dish['name_ru'], $dish['name_kg'], $dish['name_en'],
                     $dish['description_ru'], $dish['description_kg'], $dish['description_en'],
-                    $dish['price'], $dish['cook_time_minutes'], $dish['image'], $dish['is_active'], $dish['is_featured'], $dish['sort_order'], $id,
+                    $dish['price'], $dish['cook_time_minutes'], $dish['image'], $dish['is_active'], $dish['is_featured'],
+                    $dish['is_spicy'], $dish['is_vegan'], $dish['is_new'], $dish['is_promo'], $dish['sort_order'], $id,
                 ]);
             } else {
                 $stmt = $pdo->prepare(
                     'INSERT INTO dishes (category_id, name_ru, name_kg, name_en, description_ru, description_kg,
-                     description_en, price, cook_time_minutes, image, is_active, is_featured, sort_order)
-                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                     description_en, price, cook_time_minutes, image, is_active, is_featured, is_spicy, is_vegan, is_new, is_promo, sort_order)
+                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
                 );
                 $stmt->execute([
                     $dish['category_id'], $dish['name_ru'], $dish['name_kg'], $dish['name_en'],
                     $dish['description_ru'], $dish['description_kg'], $dish['description_en'],
-                    $dish['price'], $dish['cook_time_minutes'], $dish['image'], $dish['is_active'], $dish['is_featured'], $dish['sort_order'],
+                    $dish['price'], $dish['cook_time_minutes'], $dish['image'], $dish['is_active'], $dish['is_featured'],
+                    $dish['is_spicy'], $dish['is_vegan'], $dish['is_new'], $dish['is_promo'], $dish['sort_order'],
                 ]);
             }
             header('Location: /admin/dishes.php');
@@ -144,7 +151,11 @@ require __DIR__ . '/partials/header.php';
 
     <div class="form-grid">
       <div class="field"><label><input type="checkbox" name="is_active" <?= $dish['is_active'] ? 'checked' : '' ?>> Активно (показывать в меню)</label></div>
-      <div class="field"><label><input type="checkbox" name="is_featured" <?= $dish['is_featured'] ? 'checked' : '' ?>> Хит / рекомендуем</label></div>
+      <div class="field"><label><input type="checkbox" name="is_featured" <?= $dish['is_featured'] ? 'checked' : '' ?>> ⭐ Хит / рекомендуем</label></div>
+      <div class="field"><label><input type="checkbox" name="is_spicy" <?= $dish['is_spicy'] ? 'checked' : '' ?>> 🌶 Острое</label></div>
+      <div class="field"><label><input type="checkbox" name="is_vegan" <?= $dish['is_vegan'] ? 'checked' : '' ?>> 🌱 Веган</label></div>
+      <div class="field"><label><input type="checkbox" name="is_new" <?= $dish['is_new'] ? 'checked' : '' ?>> ✨ Новинка</label></div>
+      <div class="field"><label><input type="checkbox" name="is_promo" <?= $dish['is_promo'] ? 'checked' : '' ?>> 🔥 Акция</label></div>
     </div>
 
     <input type="hidden" name="id" value="<?= (int)$id ?>">

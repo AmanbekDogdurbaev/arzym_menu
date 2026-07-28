@@ -33,6 +33,25 @@ function field($row, $base, $lang) {
     return $row[$base . '_ru'] ?? '';
 }
 
+// Возвращает список активных меток блюда (острое/веган/новинка/акция/хит) с иконкой и подписью на нужном языке
+function dish_tags($dish, $lang) {
+    $defs = [
+        'featured' => ['⭐', ['ru' => 'Хит', 'kg' => 'Хит', 'en' => 'Hit']],
+        'spicy' => ['🌶', ['ru' => 'Острое', 'kg' => 'Ачуу', 'en' => 'Spicy']],
+        'vegan' => ['🌱', ['ru' => 'Веган', 'kg' => 'Веган', 'en' => 'Vegan']],
+        'new' => ['✨', ['ru' => 'Новинка', 'kg' => 'Жаңы', 'en' => 'New']],
+        'promo' => ['🔥', ['ru' => 'Акция', 'kg' => 'Акция', 'en' => 'Promo']],
+    ];
+    $out = [];
+    foreach ($defs as $key => $def) {
+        $field = $key === 'featured' ? 'is_featured' : 'is_' . $key;
+        if (!empty($dish[$field])) {
+            $out[] = ['key' => $key, 'icon' => $def[0], 'label' => $def[1][$lang] ?? $def[1]['ru']];
+        }
+    }
+    return $out;
+}
+
 function format_cook_time($minutes, $lang) {
     $minutes = (int)$minutes;
     if ($minutes <= 0) {

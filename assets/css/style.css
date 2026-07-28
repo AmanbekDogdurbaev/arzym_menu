@@ -211,6 +211,36 @@ body.header-hero .brand { font-size: 1.6rem; }
   .cat-nav a.active { border-color: var(--accent); }
 }
 
+/* Панель фильтра по меткам блюд */
+.tag-filter {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.tag-filter-btn {
+  white-space: nowrap;
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+}
+.tag-filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+@media (min-width: 700px) {
+  .tag-filter { padding: 10px 32px; }
+}
+@media (min-width: 1100px) {
+  .tag-filter { max-width: 1100px; margin-left: auto; margin-right: auto; }
+}
+
 /* Sections */
 .menu-section {
   padding: 24px 16px 4px;
@@ -269,6 +299,23 @@ body.card-outline .dish-card { border-radius: 10px; box-shadow: none; border: 2p
 }
 .dish-body { padding: 4px 6px 4px 0; display: flex; flex-direction: column; justify-content: center; gap: 4px; flex: 1; min-width: 0; }
 .dish-body h3 { margin: 0; font-size: 1.02rem; color: var(--text); }
+.dish-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.dish-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+}
+.tag-spicy { background: #d64545; }
+.tag-vegan { background: #3f9142; }
+.tag-new { background: #2f7fd1; }
+.tag-promo { background: #a13fbf; }
 .dish-body p {
   margin: 0;
   font-size: 0.85rem;

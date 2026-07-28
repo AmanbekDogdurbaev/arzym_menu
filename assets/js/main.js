@@ -81,22 +81,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var searchInput = document.getElementById('dish-search');
   var noResults = document.getElementById('no-results');
-  if (searchInput) {
-    searchInput.addEventListener('input', function () {
-      var q = searchInput.value.trim().toLowerCase();
-      var anyVisible = false;
-      sections.forEach(function (sec) {
-        var sectionHasMatch = false;
-        sec.querySelectorAll('.dish-card').forEach(function (card) {
-          var name = (card.dataset.name || '').toLowerCase();
-          var match = q === '' || name.indexOf(q) !== -1;
-          card.style.display = match ? '' : 'none';
-          if (match) sectionHasMatch = true;
-        });
-        sec.style.display = (q === '' || sectionHasMatch) ? '' : 'none';
-        if (sectionHasMatch || q === '') anyVisible = true;
+  var tagFilterBar = document.getElementById('tag-filter');
+  var activeTagFilter = 'all';
+
+  function applyFilters() {
+    var q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    var filtersActive = q !== '' || activeTagFilter !== 'all';
+    var anyVisible = false;
+    sections.forEach(function (sec) {
+      var sectionHasMatch = false;
+      sec.querySelectorAll('.dish-card').forEach(function (card) {
+        var name = (card.dataset.name || '').toLowerCase();
+        var tags = (card.dataset.tags || '').split(' ');
+        var textMatch = q === '' || name.indexOf(q) !== -1;
+        var tagMatch = activeTagFilter === 'all' || tags.indexOf(activeTagFilter) !== -1;
+        var match = textMatch && tagMatch;
+        card.style.display = match ? '' : 'none';
+        if (match) sectionHasMatch = true;
       });
-      if (noResults) noResults.style.display = anyVisible ? 'none' : 'block';
+      sec.style.display = (!filtersActive || sectionHasMatch) ? '' : 'none';
+      if (!filtersActive || sectionHasMatch) anyVisible = true;
+    });
+    if (noResults) noResults.style.display = anyVisible ? 'none' : 'block';
+  }
+
+  if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+  if (tagFilterBar) {
+    tagFilterBar.querySelectorAll('.tag-filter-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activeTagFilter = btn.dataset.tagFilter;
+        tagFilterBar.querySelectorAll('.tag-filter-btn').forEach(function (b) {
+          b.classList.toggle('active', b === btn);
+        });
+        applyFilters();
+      });
     });
   }
 
@@ -110,12 +129,24 @@ document.addEventListener('DOMContentLoaded', function () {
   var modalCookTime = document.getElementById('modal-cook-time');
   var modalDescription = document.getElementById('modal-description');
   var modalPrice = document.getElementById('modal-price');
+  var modalTags = document.getElementById('modal-tags');
 
   function openDishModal(dish) {
     if (!overlay) return;
     modalName.textContent = dish.name || '';
     modalDescription.textContent = dish.description || '';
     modalPrice.textContent = dish.price || '';
+
+    if (modalTags) {
+      modalTags.innerHTML = '';
+      (dish.tags || []).forEach(function (t) {
+        if (t.key === 'featured') return;
+        var span = document.createElement('span');
+        span.className = 'dish-tag tag-' + t.key;
+        span.textContent = t.icon + ' ' + t.label;
+        modalTags.appendChild(span);
+      });
+    }
 
     if (dish.image) {
       modalImg.src = dish.image;

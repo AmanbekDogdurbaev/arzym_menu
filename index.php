@@ -99,6 +99,15 @@ $currency = e($settings['currency'] ?? 'сом');
   </div>
 </div>
 
+<div class="tag-filter" id="tag-filter">
+  <button type="button" class="tag-filter-btn active" data-tag-filter="all"><?= $lang === 'kg' ? 'Баары' : ($lang === 'en' ? 'All' : 'Все') ?></button>
+  <button type="button" class="tag-filter-btn" data-tag-filter="featured">⭐ <?= $lang === 'kg' ? 'Хит' : ($lang === 'en' ? 'Hit' : 'Хит') ?></button>
+  <button type="button" class="tag-filter-btn" data-tag-filter="spicy">🌶 <?= $lang === 'kg' ? 'Ачуу' : ($lang === 'en' ? 'Spicy' : 'Острое') ?></button>
+  <button type="button" class="tag-filter-btn" data-tag-filter="vegan">🌱 <?= $lang === 'kg' ? 'Веган' : ($lang === 'en' ? 'Vegan' : 'Веган') ?></button>
+  <button type="button" class="tag-filter-btn" data-tag-filter="new">✨ <?= $lang === 'kg' ? 'Жаңы' : ($lang === 'en' ? 'New' : 'Новинка') ?></button>
+  <button type="button" class="tag-filter-btn" data-tag-filter="promo">🔥 <?= $lang === 'kg' ? 'Акция' : ($lang === 'en' ? 'Promo' : 'Акция') ?></button>
+</div>
+
 <main>
 <?php if (empty($categories)): ?>
   <p class="no-results" style="display:block;">
@@ -111,6 +120,9 @@ $currency = e($settings['currency'] ?? 'сом');
     <h2><?= e(field($cat, 'name', $lang)) ?></h2>
     <div class="dishes-grid">
       <?php foreach ($dishesByCategory[$cat['id']] as $dish):
+        $tags = dish_tags($dish, $lang);
+        $tagKeys = array_column($tags, 'key');
+        $inlineTags = array_filter($tags, function ($t) { return $t['key'] !== 'featured'; });
         $dishData = [
             'name' => field($dish, 'name', $lang),
             'description' => field($dish, 'description', $lang),
@@ -119,9 +131,10 @@ $currency = e($settings['currency'] ?? 'сом');
             'cookTime' => format_cook_time($dish['cook_time_minutes'] ?? 0, $lang),
             'isFeatured' => (bool)$dish['is_featured'],
             'hitLabel' => 'Хит',
+            'tags' => array_values($tags),
         ];
       ?>
-        <div class="dish-card" data-name="<?= e(field($dish, 'name', $lang)) ?>" data-dish="<?= e(json_encode($dishData, JSON_UNESCAPED_UNICODE)) ?>" tabindex="0" role="button">
+        <div class="dish-card" data-name="<?= e(field($dish, 'name', $lang)) ?>" data-tags="<?= e(implode(' ', $tagKeys)) ?>" data-dish="<?= e(json_encode($dishData, JSON_UNESCAPED_UNICODE)) ?>" tabindex="0" role="button">
           <?php if ($dish['is_featured']): ?>
             <span class="badge-hit"><?= $lang === 'kg' ? 'Хит' : ($lang === 'en' ? 'Hit' : 'Хит') ?></span>
           <?php endif; ?>
@@ -131,6 +144,13 @@ $currency = e($settings['currency'] ?? 'сом');
             <div class="dish-img placeholder"><?= $lang === 'kg' ? 'Сүрөт жок' : ($lang === 'en' ? 'No photo' : 'Нет фото') ?></div>
           <?php endif; ?>
           <div class="dish-body">
+            <?php if (!empty($inlineTags)): ?>
+              <div class="dish-tags">
+                <?php foreach ($inlineTags as $t): ?>
+                  <span class="dish-tag tag-<?= e($t['key']) ?>"><?= e($t['icon']) ?> <?= e($t['label']) ?></span>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
             <h3><?= e(field($dish, 'name', $lang)) ?></h3>
             <?php if (!empty(field($dish, 'description', $lang))): ?>
               <p><?= e(field($dish, 'description', $lang)) ?></p>
@@ -157,8 +177,21 @@ $currency = e($settings['currency'] ?? 'сом');
       <?php $addr = field($settings, 'address', $lang); if (!empty($addr)): ?><span>📍 <?= e($addr) ?></span><?php endif; ?>
     </div>
     <div>
-      <?php if (!empty($settings['instagram'])): ?><a class="social" href="<?= e($settings['instagram']) ?>" target="_blank" rel="noopener">Instagram</a><?php endif; ?>
-      <?php if (!empty($settings['whatsapp'])): ?> · <a class="social" href="<?= e($settings['whatsapp']) ?>" target="_blank" rel="noopener">WhatsApp</a><?php endif; ?>
+      <?php
+        $socialLinks = [
+            'Instagram' => $settings['instagram'] ?? '',
+            'WhatsApp' => $settings['whatsapp'] ?? '',
+            'Telegram' => $settings['telegram'] ?? '',
+            'Facebook' => $settings['facebook'] ?? '',
+            'TikTok' => $settings['tiktok'] ?? '',
+        ];
+        $socialLinks = array_filter($socialLinks);
+        $i = 0;
+        foreach ($socialLinks as $label => $url):
+            if ($i++ > 0) echo ' · ';
+      ?>
+        <a class="social" href="<?= e($url) ?>" target="_blank" rel="noopener"><?= e($label) ?></a>
+      <?php endforeach; ?>
     </div>
   </div>
 </footer>
@@ -171,6 +204,7 @@ $currency = e($settings['currency'] ?? 'сом');
       <span class="badge-hit modal-badge" id="modal-badge" style="display:none;">Хит</span>
     </div>
     <div class="modal-content">
+      <div class="dish-tags" id="modal-tags"></div>
       <h2 id="modal-name"></h2>
       <div class="modal-meta">
         <span class="modal-cook-time" id="modal-cook-time" style="display:none;"></span>

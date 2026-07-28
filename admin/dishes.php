@@ -57,7 +57,7 @@ require __DIR__ . '/partials/header.php';
   <div class="table-scroll">
   <table class="data-table">
     <thead>
-      <tr><th>Фото</th><th>Название (ru)</th><th>Категория</th><th>Цена</th><th>Время</th><th>Хит</th><th>Активно</th><th></th></tr>
+      <tr><th>Фото</th><th>Название (ru)</th><th>Категория</th><th>Цена</th><th>Время</th><th>Метки</th><th>Активно</th><th></th></tr>
     </thead>
     <tbody>
       <?php foreach ($dishes as $dish): ?>
@@ -67,7 +67,9 @@ require __DIR__ . '/partials/header.php';
           <td><?= e($dish['cat_name']) ?></td>
           <td><?= number_format((float)$dish['price'], 0, '.', ' ') ?></td>
           <td><?= $dish['cook_time_minutes'] ? (int)$dish['cook_time_minutes'] . ' мин' : '—' ?></td>
-          <td><?= $dish['is_featured'] ? '⭐' : '' ?></td>
+          <td>
+            <?= $dish['is_featured'] ? '⭐' : '' ?><?= $dish['is_spicy'] ? '🌶' : '' ?><?= $dish['is_vegan'] ? '🌱' : '' ?><?= $dish['is_new'] ? '✨' : '' ?><?= $dish['is_promo'] ? '🔥' : '' ?>
+          </td>
           <td><?= $dish['is_active'] ? '✅' : '—' ?></td>
           <td class="actions-cell">
             <a class="btn btn-secondary btn-sm" href="dish_form.php?id=<?= (int)$dish['id'] ?>">Изменить</a>

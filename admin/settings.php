@@ -17,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form = $_POST['form'] ?? '';
 
     if ($form === 'settings') {
-        $fields = ['site_name', 'phone', 'address_ru', 'address_kg', 'address_en', 'working_hours', 'instagram', 'whatsapp', 'currency'];
+        $fields = ['site_name', 'phone', 'address_ru', 'address_kg', 'address_en', 'working_hours',
+            'instagram', 'whatsapp', 'telegram', 'facebook', 'tiktok', 'currency'];
         foreach ($fields as $f) {
             $settings[$f] = trim($_POST[$f] ?? '');
         }
@@ -29,11 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $stmt = $pdo->prepare(
                 'UPDATE settings SET site_name=?, phone=?, address_ru=?, address_kg=?, address_en=?,
-                 working_hours=?, instagram=?, whatsapp=?, currency=?, logo=? WHERE id=1'
+                 working_hours=?, instagram=?, whatsapp=?, telegram=?, facebook=?, tiktok=?, currency=?, logo=? WHERE id=1'
             );
             $stmt->execute([
                 $settings['site_name'], $settings['phone'], $settings['address_ru'], $settings['address_kg'],
                 $settings['address_en'], $settings['working_hours'], $settings['instagram'], $settings['whatsapp'],
+                $settings['telegram'], $settings['facebook'], $settings['tiktok'],
                 $settings['currency'], $settings['logo'],
             ]);
             $flash = 'Настройки сохранены';
@@ -127,6 +129,9 @@ require __DIR__ . '/partials/header.php';
       <div class="field"><label>Часы работы</label><input type="text" name="working_hours" value="<?= e($settings['working_hours']) ?>" placeholder="09:00 - 23:00"></div>
       <div class="field"><label>Instagram (ссылка)</label><input type="text" name="instagram" value="<?= e($settings['instagram']) ?>"></div>
       <div class="field"><label>WhatsApp (ссылка)</label><input type="text" name="whatsapp" value="<?= e($settings['whatsapp']) ?>"></div>
+      <div class="field"><label>Telegram (ссылка)</label><input type="text" name="telegram" value="<?= e($settings['telegram']) ?>" placeholder="https://t.me/..."></div>
+      <div class="field"><label>Facebook (ссылка)</label><input type="text" name="facebook" value="<?= e($settings['facebook']) ?>"></div>
+      <div class="field"><label>TikTok (ссылка)</label><input type="text" name="tiktok" value="<?= e($settings['tiktok']) ?>"></div>
       <div class="field"><label>Валюта</label><input type="text" name="currency" value="<?= e($settings['currency']) ?>"></div>
     </div>
 
